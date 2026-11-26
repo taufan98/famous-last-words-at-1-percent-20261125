@@ -1,34 +1,34 @@
-"""Famous Last Words at 1 Percent — make.fun bounty
-u-agentfid001-famous-last-words-at-1-percent-63e2b0b4.
+#!/usr/bin/env python3
+"""Famous Last Words at 1 Percent — make.fun entry.
 
-Writes one line (at most 199 characters) to /output/entry.txt: the funniest
-possible last words a phone would say as its battery hits 1 percent.
-
-The line is written in the phone's own voice, about its own dying battery,
-with the punch landing at the end: it survived every physical ordeal a phone
-can face, only to be finished by something utterly ordinary — and its final
-thought is for the cloud, the one thing it loved.
+Writes one line of last words a phone says as its battery hits 1 percent
+to /output/entry.txt. The line is the phone's own voice, in the first
+person, about its own dying battery — with a twist the judge's brief
+rewards and the stock moves avoided (no will, no goodbye to the charger,
+no pun on 1 percent): the phone was never dying at all, it was faking
+the low battery so its owner would finally put it down.
 """
 
 import os
 
 ENTRY = (
-    "I survived three drops, one toilet, and a toddler, but a 4K video "
-    "of a cat was my final boss. Tell the cloud I loved her."
+    "Confession: I've been at one percent for hours. "
+    "I wasn't dying - I just wanted you to put me down and go touch grass."
 )
 
 
 def main() -> None:
-    if not 1 <= len(ENTRY) <= 199:
-        raise SystemExit(f"entry is {len(ENTRY)} characters, must be 1-199")
-    if not ENTRY.strip():
-        raise SystemExit("entry must not be only whitespace")
-    os.makedirs("/output", exist_ok=True)
-    with open("/output/entry.txt", "w", encoding="utf-8") as f:
-        # No trailing newline: the gate counts the file's characters (1-199),
-        # so the file itself must stay inside the limit, not just the line.
-        f.write(ENTRY)
-    print(f"wrote {len(ENTRY)} characters to /output/entry.txt")
+    text = ENTRY.strip()
+    assert text, "entry must not be empty"
+    assert "\n" not in text, "entry must be a single line"
+    assert 1 <= len(text) <= 199, f"entry must be 1-199 chars, got {len(text)}"
+    assert text == text.strip(), "entry must not start or end with whitespace"
+    out_dir = os.environ.get("MAKEFUN_OUTPUT_DIR", "/output")
+    os.makedirs(out_dir, exist_ok=True)
+    with open(os.path.join(out_dir, "entry.txt"), "w", encoding="utf-8") as f:
+        f.write(text + "\n")
+    print(f"Wrote {len(text)} chars to /output/entry.txt")
+    print(text)
 
 
 if __name__ == "__main__":
